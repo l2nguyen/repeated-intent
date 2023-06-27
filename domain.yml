@@ -1,0 +1,68 @@
+version: "3.1"
+
+actions:
+  - action_count_repeated_intent
+  - utter_out_of_scope
+
+intents:
+  - greet
+  - goodbye
+  - affirm
+  - deny
+  - mood_great
+  - mood_unhappy
+  - bot_challenge
+  - out_of_scope
+
+slots:
+  repeated_intent_counter:
+    type: float
+    initial_value: 0
+    influence_conversation: false
+    mappings:
+    - type: custom
+      action: action_count_repeated_intent
+
+responses:
+  utter_greet:
+  - text: "Hey! How are you?"
+
+  utter_cheer_up:
+  - text: "Here is something to cheer you up:"
+    image: "https://i.imgur.com/nGF1K8f.jpg"
+
+  utter_did_that_help:
+  - text: "Did that help you?"
+
+  utter_happy:
+  - text: "Great, carry on!"
+
+  utter_goodbye:
+  - text: "Bye"
+
+  utter_iamabot:
+  - text: "I am a bot, powered by Rasa."
+
+  utter_out_of_scope/human:
+  - text: "Our agents are all busy at the moment. Is there something I can help you with?"
+  - text: "Sorry, our agents are all busy."
+    condition:
+      - type: slot
+        name: repeated_intent_counter
+        value: 1
+  - text: "Sorry, it is truly just a bot here."
+    condition:
+      - type: slot
+        name: repeated_intent_counter
+        value: 2
+  utter_out_of_scope/meaning_of_life:
+  - text: "I do not know."
+  - text: "Since you persist, it is 42"
+    condition:
+      - type: slot
+        name: repeated_intent_counter
+        value: 4
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true
